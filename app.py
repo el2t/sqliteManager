@@ -8,7 +8,7 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 # تحديد مسار مجلد قواعد البيانات
-DB_DIR = 'databases'
+DB_DIR = 'GoalMeterics/DetectionExtraction/databases/'
 
 # التأكد من وجود مجلد قواعد البيانات
 if not os.path.exists(DB_DIR):
