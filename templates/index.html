@@ -193,7 +193,7 @@
                     <tbody>
                         ${data.map(row => `
                             <tr>
-                                ${columns.map(col => `<td>${row[col] || ''}</td>`).join('')}
+                                ${columns.map(col => `<td>${row[col]}</td>`).join('')}
                             </tr>
                         `).join('')}
                     </tbody>
