@@ -165,12 +165,12 @@
                 });
                 const result = await response.json();
                 if (!response.ok) {
-                    throw new Error(result.error || 'حدث خطأ غير معروف');
+                    throw new Error(result.error || 'Unknown error occurred.');
                 }
                 return result;
             } catch (error) {
                 console.error('Fetch error:', error);
-                dataContainer.innerHTML = `<div class="p-4 text-center text-red-500">حدث خطأ: ${error.message}</div>`;
+                dataContainer.innerHTML = `<div class="p-4 text-center text-red-500">Error: ${error.message}</div>`;
                 return null;
             } finally {
                 hideLoading();
@@ -227,7 +227,7 @@
             }
         }
 
-        async function getColumnsAndData() {
+        async function getColumns() {
             const dbName = dbSelect.value;
             const tableName = tableSelect.value;
             if (!tableName) {
@@ -259,6 +259,7 @@
             const searchColumn = searchColumnSelect.value;
             const searchText = searchInput.value;
 
+            // Only perform search if all fields are filled
             if (dbName && tableName && searchColumn && searchText) {
                 const dataResponse = await fetchPost('/get_data', {
                     db_name: dbName,
@@ -275,7 +276,7 @@
         }
 
         dbSelect.addEventListener('change', getTables);
-        tableSelect.addEventListener('change', getColumnsAndData);
+        tableSelect.addEventListener('change', getColumns);
         searchButton.addEventListener('click', searchData);
 
         // Enable search on Enter key press

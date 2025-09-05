@@ -97,8 +97,12 @@ def get_data():
         query = f"SELECT * FROM {table_name}"
         params = []
         if search_column and search_text:
-            query += f" WHERE {search_column} == ?"
-            params.append(f"%{search_text}%")
+            # هنا التعديل المطلوب: استخدام "=" للتطابق التام
+            query += f" WHERE {search_column} = ?"
+            params.append(search_text)
+        else:
+            # في حالة عدم وجود بحث، قم بجلب جميع البيانات
+            query += " LIMIT 100" # إضافة حد للبيانات لتجنب جلب كمية كبيرة
 
         cursor.execute(query, params)
         rows = cursor.fetchall()
@@ -113,6 +117,7 @@ def get_data():
     finally:
         if conn:
             conn.close()
+
 
 # تشغيل التطبيق
 if __name__ == '__main__':
