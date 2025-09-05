@@ -117,7 +117,7 @@
                 <div class="flex-grow">
                     <label for="search-column-select" class="block text-gray-700 font-medium mb-1">Search Column:</label>
                     <select id="search-column-select" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" disabled>
-                        <option value="" disabled selected>-- اختر عمود --</option>
+                        <option value="" disabled selected>-- Select a column --</option>
                     </select>
                 </div>
                 <div class="flex-grow">
@@ -131,7 +131,7 @@
         </div>
 
         <div class="data-table-container border rounded-lg overflow-hidden" id="data-container">
-            <!-- سيتم عرض البيانات هنا -->
+            <!-- Data will be displayed here -->
         </div>
 
     </div>
@@ -166,7 +166,7 @@
                 const result = await response.json();
                 if (!response.ok) {
                     throw new Error(result.error || 'حدث خطأ غير معروف');
-                } 
+                }
                 return result;
             } catch (error) {
                 console.error('Fetch error:', error);
@@ -223,7 +223,7 @@
                 searchColumnSelect.innerHTML = `<option value="" disabled selected>-- Select a column --</option>`;
                 searchInput.disabled = true;
                 searchButton.disabled = true;
-                dataContainer.innerHTML = `<div class="p-4 text-center text-gray-500">اختر جدولًا لعرض البيانات.</div>`;
+                dataContainer.innerHTML = `<div class="p-4 text-center text-gray-500">Select a table to view data.</div>`;
             }
         }
 
@@ -251,12 +251,6 @@
                     searchColumnSelect.appendChild(option);
                 });
             }
-
-            // عرض جميع البيانات عند اختيار الجدول لأول مرة
-            const dataResponse = await fetchPost('/get_data', { db_name: dbName, table_name: tableName });
-            if (dataResponse) {
-                renderTable(dataResponse.data, dataResponse.columns);
-            }
         }
 
         async function searchData() {
@@ -265,23 +259,18 @@
             const searchColumn = searchColumnSelect.value;
             const searchText = searchInput.value;
 
-            if (!dbName || !tableName || !searchColumn || !searchText) {
-                // إذا كان البحث فارغًا، اعرض كل البيانات
-                const dataResponse = await fetchPost('/get_data', { db_name: dbName, table_name: tableName });
+            if (dbName && tableName && searchColumn && searchText) {
+                const dataResponse = await fetchPost('/get_data', {
+                    db_name: dbName,
+                    table_name: tableName,
+                    search_column: searchColumn,
+                    search_text: searchText
+                });
                 if (dataResponse) {
                     renderTable(dataResponse.data, dataResponse.columns);
                 }
-                return;
-            }
-
-            const dataResponse = await fetchPost('/get_data', {
-                db_name: dbName,
-                table_name: tableName,
-                search_column: searchColumn,
-                search_text: searchText
-            });
-            if (dataResponse) {
-                renderTable(dataResponse.data, dataResponse.columns);
+            } else {
+                dataContainer.innerHTML = `<div class="p-4 text-center text-red-500">Please select all fields and enter search text.</div>`;
             }
         }
 
@@ -289,7 +278,7 @@
         tableSelect.addEventListener('change', getColumnsAndData);
         searchButton.addEventListener('click', searchData);
 
-        // تفعيل البحث عند الضغط على Enter
+        // Enable search on Enter key press
         searchInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 searchButton.click();
