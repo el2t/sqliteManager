@@ -97,7 +97,7 @@ def get_data():
         query = f"SELECT * FROM {table_name}"
         params = []
         if search_column and search_text:
-            query += f" WHERE {search_column} LIKE ?"
+            query += f" WHERE {search_column} = ?"
             params.append(f"%{search_text}%")
 
         cursor.execute(query, params)
